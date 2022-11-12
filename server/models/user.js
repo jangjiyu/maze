@@ -14,6 +14,14 @@ module.exports = class User extends Sequelize.Model {
           allowNull: false,
           unique: true,
         },
+        termsConditionsConsent: {
+          type: Sequelize.BOOLEAN(),
+          allowNull: false,
+        },
+        marketingConsent: {
+          type: Sequelize.BOOLEAN(),
+          allowNull: false,
+        },
       },
       {
         sequelize,
@@ -29,11 +37,6 @@ module.exports = class User extends Sequelize.Model {
   }
 
   static associate(db) {
-    db.User.hasMany(db.LoginHistory, {
-      foreignKey: "userId",
-      sourceKey: "userId",
-      onDelete: "CASCADE",
-    });
     db.User.hasMany(db.SmsAuthCheck, {
       foreignKey: "userId",
       sourceKey: "userId",

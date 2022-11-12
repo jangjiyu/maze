@@ -3,7 +3,7 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../config/config.js")[env];
 
 const User = require("./user");
-const LoginHistory = require("./loginHistory");
+const SmsAuthCheck = require("./smsAuthCheck");
 
 const db = {};
 
@@ -16,12 +16,12 @@ const sequelize = new Sequelize(
 
 db.sequelize = sequelize;
 db.User = User;
-db.LoginHistory = LoginHistory;
+db.SmsAuthCheck = SmsAuthCheck;
 
 User.init(sequelize);
-LoginHistory.init(sequelize);
+SmsAuthCheck.init(sequelize);
 
 User.associate(db);
-LoginHistory.associate(db);
+SmsAuthCheck.associate(db);
 
 module.exports = db;
