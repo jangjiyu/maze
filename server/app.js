@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const { sequelize } = require("./models");
 const router = require("./routes");
-const { SmsAuthCheckTableScheduler } = require("./utils/setSchedule");
+const SmsAuthCheckTableScheduler = require("./utils/setSchedule");
 require("dotenv").config();
 
 const app = express();
