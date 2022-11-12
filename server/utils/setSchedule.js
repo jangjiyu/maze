@@ -5,7 +5,7 @@ const date = require("./date");
 
 const SmsAuthCheckTableScheduler = async () => {
   try {
-    // 매일 자정에 sms 인증 data 삭제 스케쥴 실행
+    // 매일 자정에 sms 미인증 data 삭제 스케쥴 실행
     schedule.scheduleJob("0 0 * * *", async () => {
       const twoMinutesAgo = date.calculateTwoMinutesAgo();
 
