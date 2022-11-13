@@ -1,5 +1,8 @@
 # maze 백엔드 채용 과제
 
+## 배포 주소
+www.apryll.shop
+
 ## DB ERD
 ![스크린샷 2022-11-14 오전 12 55 26](https://user-images.githubusercontent.com/102751923/201531151-847c983f-c8b2-4a5d-a6b5-406b300b2de1.png)
 
