@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
       next();
     });
   } catch (error) {
-    res.status(401).send({
+    res.status(403).send({
       success: false,
       errorMessage: "로그인 후 사용하세요",
     });
