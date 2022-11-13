@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { SmsAuthCheck } = require("../models");
+const { User, SmsAuthCheck } = require("../models");
 const authMiddleware = require("../middlewares/authMiddleware");
 const jwt = require("jsonwebtoken");
 const sendMessage = require("../utils/sendMessage");
@@ -47,6 +47,11 @@ router.post("/login", async (req, res) => {
     });
     let alertMessage = "재방문을 환영합니다!";
     if (!isVisited) {
+      await User.create({
+        phoneNumber,
+        termsConditionsConsent,
+        marketingConsent,
+      });
       alertMessage = "환영합니다! 가입이 완료되었습니다.";
     }
     await SmsAuthCheck.update(
