@@ -2,6 +2,7 @@
 const token = localStorage.getItem("x-access-token");
 
 const btnShowLoginHistory = document.querySelector("#showLoginHistory");
+const loginHistoryList = document.querySelector("#loginHistory");
 
 btnShowLoginHistory.addEventListener("click", showLoginHistory);
 
@@ -20,14 +21,16 @@ async function showLoginHistory(event) {
     );
   }
 
-  const rows = loginHistoryReturn.data;
-  for (let i = 0; i < rows.length; i++) {
-    let time = rows[i]["time"];
+  const rows = loginHistoryReturn.data.loginHistory;
 
-    let tempHtml = `<p>${time}</p>`;
-    return tempHtml;
+  for (let i = 0; i < rows.length; i++) {
+    let time = rows[i]["updatedAt"];
+    console.log(time);
+
+    let tempHtml = `<tr>
+                      <td>${time}</td>
+                    </tr>`;
+
+    loginHistoryList.insertAdjacentHTML("afterbegin", tempHtml);
   }
 }
-
-const loginHistoryList = document.querySelector("#loginHistory");
-loginHistoryList.append(tempHtml);
