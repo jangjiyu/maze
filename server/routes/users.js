@@ -9,7 +9,7 @@ const date = require("../utils/date");
 const { Op } = require("sequelize");
 
 // 로그인 [POST] /api/users/login
-router.post("/", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const {
       phoneNumber,
