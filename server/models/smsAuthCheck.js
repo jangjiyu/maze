@@ -12,15 +12,10 @@ module.exports = class SmsAuthCheck extends Sequelize.Model {
         phoneNumber: {
           type: Sequelize.STRING(),
           allowNull: false,
-          unique: true,
         },
         authNumber: {
           type: Sequelize.STRING(),
           allowNull: false,
-        },
-        location: {
-          type: Sequelize.STRING(),
-          allowNull: true,
         },
         isAuthenticated: {
           type: Sequelize.BOOLEAN(),
@@ -39,12 +34,5 @@ module.exports = class SmsAuthCheck extends Sequelize.Model {
         collate: "utf8_general_ci",
       }
     );
-  }
-  static associate(db) {
-    db.SmsAuthCheck.belongsTo(db.User, {
-      foreignKey: "userId",
-      targetKey: "userId",
-      onDelete: "CASCADE",
-    });
   }
 };
