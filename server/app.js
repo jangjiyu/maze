@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const { sequelize } = require("./models");
+const cors = require("cors");
 const router = require("./routes");
 const SmsAuthCheckTableScheduler = require("./utils/setSchedule");
 require("dotenv").config();
@@ -21,6 +22,7 @@ sequelize
 // 미사용 문자 인증 번호 DATA 삭제
 SmsAuthCheckTableScheduler();
 
+app.use(cors());
 app.use(morgan("combined"));
 app.use(express.json());
 app.use("/api", router);
