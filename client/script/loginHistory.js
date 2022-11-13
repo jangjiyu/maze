@@ -19,5 +19,15 @@ async function showLoginHistory(event) {
       "예기치 못한 문제가 발생하였습니다. 잠시 후 다시 시도해 주세요."
     );
   }
-  return loginHistoryReturn.data;
+
+  const rows = loginHistoryReturn.data;
+  for (let i = 0; i < rows.length; i++) {
+    let time = rows[i]["time"];
+
+    let tempHtml = `<p>${time}</p>`;
+    return tempHtml;
+  }
 }
+
+const loginHistoryList = document.querySelector("#loginHistory");
+loginHistoryList.append(tempHtml);
