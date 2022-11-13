@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>maze 과제</title>
+</head>
+
+<body>
+  <div class="inner">
+    <div class="login-container">
+      <h2>회원가입 및 로그인</h2>
+      <div class="login-form">
+        <input type="text" placeholder="핸드폰 번호" id="phoneNumber" />
+        <input type="button" value="인증번호 전송" id="sendMessage" /><br>
+        <input type="text" placeholder="인증번호" id="authNumber" /><br>
+        <span>인증번호는 2분 동안만 유효합니다.</span>
+        <div>
+          <sub>
+            이용약관 동의 (필수) <input id="termsConditionsConsent" type="checkbox" checked>
+          </sub><br>
+          <sub>
+            마케팅 활용 및 수신 동의 (선택) <input id="marketingConsent" type="checkbox">
+          </sub>
+        </div>
+        <input type="button" value="로그인" id="login" />
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
+    integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="./script/login.js"></script>
+</body>
+
+</html>
