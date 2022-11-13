@@ -7,7 +7,7 @@ module.exports = {
     database: process.env.MYSQL_DB_DEV,
     host: process.env.MYSQL_HOST_DEV,
     dialect: "mysql",
-    logging: true,
+    logging: false,
     timezone: "+09:00",
     dialectOptions: {
       dateStrings: true,
