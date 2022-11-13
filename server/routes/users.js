@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { User, SmsAuthCheck } = require("../models");
+const { SmsAuthCheck } = require("../models");
 const authMiddleware = require("../middlewares/authMiddleware");
 const jwt = require("jsonwebtoken");
-const geoip = require("geoip-lite");
 const sendMessage = require("../utils/sendMessage");
-const date = require("../utils/date");
+const calculateTwoMinutesAgo = require("../utils/date");
 const { Op } = require("sequelize");
 
 // 로그인 [POST] /api/users/login
@@ -17,10 +16,7 @@ router.post("/login", async (req, res) => {
       termsConditionsConsent,
       marketingConsent,
     } = req.body;
-    const userIp = req.ip;
-    const { country, region, city } = geoip.lookup(userIp);
-    const location = `${country}/${region}/${city}`;
-    const twoMinutesAgo = date.calculateTwoMinutesAgo();
+    const twoMinutesAgo = calculateTwoMinutesAgo();
 
     // 이용약관 미동의 시 에러메시지 반환
     if (!termsConditionsConsent) {
@@ -46,27 +42,19 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    let userData = await User.findOne({ where: { phoneNumber } });
+    let isVisited = await SmsAuthCheck.findOne({
+      where: { phoneNumber, isAuthenticated: true },
+    });
     let alertMessage = "재방문을 환영합니다!";
-    // 유저 정보 없을 시 생성 후 SmsAuthCheck 테이블 isAuthenticated, location 컬럼 update -> login history로 이용
-    if (!userData) {
-      userData = await User.create({
-        phoneNumber,
-        termsConditionsConsent,
-        marketingConsent,
-      });
-      await SmsAuthCheck.update(
-        { isAuthenticated: true, location },
-        { where: { phoneNumber, authNumber } }
-      );
+    if (!isVisited) {
       alertMessage = "환영합니다! 가입이 완료되었습니다.";
     }
     await SmsAuthCheck.update(
-      { isAuthenticated: true, location },
+      { isAuthenticated: true },
       { where: { phoneNumber, authNumber } }
     );
 
-    const payload = { userId: userData.userId };
+    const payload = { phoneNumber };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
       expiresIn: "7d",
     });
@@ -74,9 +62,6 @@ router.post("/login", async (req, res) => {
     res.status(201).json({ success: true, token, alertMessage });
   } catch (error) {
     console.error(error);
-    res.status(400).send({
-      errorMessage: "올바르지 않는 요청입니다. 확인 후 다시 시도해 주세요.",
-    });
   }
 });
 
@@ -89,7 +74,7 @@ router.post("/sendAuthSms", async (req, res) => {
     const authNumber = Math.floor(100000 + Math.random() * 900000);
 
     // 2분 이내에 인증문자 보낸 이력 존재 && 미인증인 컬럼이 존재하는 경우 인증번호 update하고 재전송
-    const twoMinutesAgo = date.calculateTwoMinutesAgo();
+    const twoMinutesAgo = calculateTwoMinutesAgo();
     const isExAuthNumber = await SmsAuthCheck.findOne({
       where: {
         phoneNumber,
@@ -97,48 +82,43 @@ router.post("/sendAuthSms", async (req, res) => {
         createdAt: { [Op.gt]: twoMinutesAgo },
       },
     });
+    console.log(isExAuthNumber);
+
     if (isExAuthNumber) {
       await SmsAuthCheck.update(
         { authNumber },
         {
           where: {
-            phoneNumber,
-            isAuthenticated: false,
-            createdAt: { [Op.gt]: twoMinutesAgo },
+            smsAuthCheckId: isExAuthNumber.smsAuthCheckId,
           },
         }
       );
+    } else {
+      // 위의 경우가 아니면 새로운 인증정보 컬럼 create 후 전송
+      await SmsAuthCheck.create({ phoneNumber, authNumber });
     }
-    // 위의 경우가 아니면 새로운 인증정보 컬럼 create 후 전송
-    await SmsAuthCheck.create({ phoneNumber, authNumber });
 
     sendMessage(phoneNumber, authNumber);
 
     res.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
-    res.status(400).send({
-      errorMessage: "올바르지 않는 요청입니다. 확인 후 다시 시도해 주세요.",
-    });
   }
 });
 
 // 로그인 이력 조회 [GET] /api/users/loginHistories
 router.get("/loginHistories", authMiddleware, async (req, res) => {
   try {
-    const { userId } = res.locals.user;
+    const { phoneNumber } = res.locals.user;
 
     const loginHistory = await SmsAuthCheck.findAll({
-      where: { userId, isAuthenticated: true },
-      attributes: ["location", "updatedAt"],
+      where: { phoneNumber, isAuthenticated: true },
+      attributes: ["updatedAt"],
     });
 
     res.status(200).json({ success: true, loginHistory });
   } catch (error) {
     console.error(error);
-    res.status(400).send({
-      errorMessage: "올바르지 않는 요청입니다. 확인 후 다시 시도해 주세요.",
-    });
   }
 });
 

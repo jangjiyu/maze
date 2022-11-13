@@ -1,24 +1,24 @@
 const jwt = require("jsonwebtoken");
-const { User } = require("../models");
+const { SmsAuthCheck } = require("../models");
 
 module.exports = (req, res, next) => {
   try {
-    const { authorization } = req.headers;
-    const [tokenType, tokenValue] = authorization.split(" ");
-
-    if (tokenType !== "Bearer") {
-      res.status(401).send({
+    const token = req.headers["x-access-token"];
+    if (!token) {
+      return res.status(403).json({
+        success: false,
         errorMessage: "로그인 후 사용하세요",
       });
-      return;
     }
-    const { userId } = jwt.verify(tokenValue, process.env.JWT_SECRET_KEY);
-    User.findByPk(userId).then((user) => {
+
+    const { phoneNumber } = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    SmsAuthCheck.findOne({ where: { phoneNumber } }).then((user) => {
       res.locals.user = user;
       next();
     });
   } catch (error) {
     res.status(401).send({
+      success: false,
       errorMessage: "로그인 후 사용하세요",
     });
   }
