@@ -25,6 +25,7 @@ SmsAuthCheckTableScheduler();
 app.use(cors());
 app.use(morgan("combined"));
 app.use(express.json());
+app.use(express.static("/home/ubuntu/maze/client"));
 app.use("/api", router);
 
 app.listen(port, () => {
