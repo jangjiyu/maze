@@ -20,10 +20,7 @@ router.post("/login", async (req, res, next) => {
 
     // 이용약관 미동의 시 에러메시지 반환
     if (!termsConditionsConsent) {
-      res.status(400).json({
-        success: false,
-        errorMessage: "이용약관 동의 후 서비스 이용 가능합니다.",
-      });
+      throw new Error("이용약관 동의 후 서비스 이용 가능합니다.");
     }
 
     // 일치하는 정보 없을 시 에러메시지 반환
@@ -36,10 +33,7 @@ router.post("/login", async (req, res, next) => {
       },
     });
     if (!authNumberCheck) {
-      res.status(400).json({
-        success: false,
-        errorMessage: "핸드폰 번호 또는 인증 번호를 다시 확인해 주세요.",
-      });
+      throw new Error("핸드폰 번호 또는 인증 번호를 다시 확인해 주세요.");
     }
 
     let isVisited = await SmsAuthCheck.findOne({
