@@ -10,7 +10,7 @@ async function showLoginHistory(event) {
   try {
     const loginHistoryReturn = await axios({
       method: "get",
-      url: "http://localhost:3001/api/users/loginHistories",
+      url: "http://apryll.shop/api/users/loginHistories",
       headers: { "x-access-token": token },
       data: {},
     });

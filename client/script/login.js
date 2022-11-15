@@ -12,7 +12,7 @@ async function sendMessage(event) {
 
     const sendMessageReturn = await axios({
       method: "post",
-      url: "http://localhost:3001/api/users/sendAuthSms",
+      url: "http://apryll.shop/api/users/sendAuthSms",
       headers: {},
       data: {
         phoneNumber,
@@ -53,7 +53,7 @@ async function login(event) {
 
     const loginReturn = await axios({
       method: "post",
-      url: "http://localhost:3001/api/users/login",
+      url: "http://apryll.shop/api/users/login",
       headers: {},
       data: {
         phoneNumber,
