@@ -51,6 +51,10 @@ async function login(event) {
     const termsConditionsConsentResult = termsConditions.checked;
     const marketingConsentResult = marketing.checked;
 
+    if (termsConditionsConsentResult === false) {
+      return alert("이용약관 동의 후 서비스 이용 가능합니다.");
+    }
+
     const loginReturn = await axios({
       method: "post",
       url: "http://apryll.shop/api/users/login",
@@ -63,7 +67,7 @@ async function login(event) {
       },
     });
 
-    const isValidLogin = loginReturn.data.success == true;
+    const isValidLogin = loginReturn.data.success === true;
     if (!isValidLogin) {
       return alert(
         "로그인 정보가 올바르지 않습니다. 확인 후 다시 시도해 주세요."
@@ -75,6 +79,8 @@ async function login(event) {
     alert(loginReturn.data.alertMessage);
     return location.replace("./loginHistory.html");
   } catch (error) {
-    return alert("로그인을 실패하였습니다. 확인 후 다시 시도해 주세요.");
+    return alert(
+      "로그인 정보가 올바르지 않습니다. 확인 후 다시 시도해 주세요."
+    );
   }
 }
