@@ -8,7 +8,7 @@ const calculateTwoMinutesAgo = require("../utils/date");
 const { Op } = require("sequelize");
 
 // 로그인 [POST] /api/users/login
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   try {
     const {
       phoneNumber,
@@ -66,12 +66,12 @@ router.post("/login", async (req, res) => {
 
     res.status(201).json({ success: true, token, alertMessage });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 });
 
 // 로그인 및 회원가입 인증번호 문자 전송 [POST] /api/users/sendAuthSms
-router.post("/sendAuthSms", async (req, res) => {
+router.post("/sendAuthSms", async (req, res, next) => {
   try {
     const { phoneNumber } = req.body;
 
@@ -87,7 +87,6 @@ router.post("/sendAuthSms", async (req, res) => {
         createdAt: { [Op.gt]: twoMinutesAgo },
       },
     });
-    console.log(isExAuthNumber);
 
     if (isExAuthNumber) {
       await SmsAuthCheck.update(
@@ -103,16 +102,19 @@ router.post("/sendAuthSms", async (req, res) => {
       await SmsAuthCheck.create({ phoneNumber, authNumber });
     }
 
-    sendMessage(phoneNumber, authNumber);
+    const sendMessageResult = sendMessage(phoneNumber, authNumber, next);
+    if ((await sendMessageResult).status !== 200) {
+      throw new Error("문자 발송 실패");
+    }
 
     res.status(200).json({ success: true });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 });
 
 // 로그인 이력 조회 [GET] /api/users/loginHistories
-router.get("/loginHistories", authMiddleware, async (req, res) => {
+router.get("/loginHistories", authMiddleware, async (req, res, next) => {
   try {
     const { phoneNumber } = res.locals.user;
 
@@ -123,7 +125,7 @@ router.get("/loginHistories", authMiddleware, async (req, res) => {
 
     res.status(200).json({ success: true, loginHistory });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 });
 
