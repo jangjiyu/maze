@@ -1,10 +1,5 @@
 # maze 백엔드 채용 과제
 
-<br/>
-
-## 배포 주소
-
-www.apryll.shop
 
 <br/>
 
